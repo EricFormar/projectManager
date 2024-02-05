@@ -1,20 +1,28 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+require('dotenv').config()
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
 
-var indexRouter = require('./routes/index');
+const connectDB = require('./config/db');
 
-var app = express();
+const app = express();
+
+app
+  .use('/', require('./routes/index.routes'))
+  .use('/api/auth',require('./routes/auth.routes')) 
+  .use('/api/users',require('./routes/users.routes')) 
+  .use('/api/projects',require('./routes/projects.routes')) 
+  .use('/api/tasks',require('./routes/tasks.routes')) 
+
+connectDB();
 
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
-app.use('/', indexRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
